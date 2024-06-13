@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
-import com.football.league.data.datasource.remote.dto.EquipmentModel
+import com.football.league.data.datasource.remote.dto.TeamData
 import com.football.league.data.datasource.remote.dto.TeamDetailsResponse
 import com.football.league.ui.activity.MainViewModel
 import dev.esteki.expandable.Expandable
@@ -115,7 +115,7 @@ fun SearchJerseyPage(viewModel: MainViewModel = hiltViewModel()) {
 @Composable
 fun ExpandableListItem(
     team: TeamDetailsResponse,
-    equipmentResults: EquipmentModel?,
+    equipmentResults: TeamData?,
     onClick : () -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }

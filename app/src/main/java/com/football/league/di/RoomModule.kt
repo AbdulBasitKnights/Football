@@ -2,9 +2,9 @@ package com.football.league.di
 
 import android.content.Context
 import androidx.room.Room
-import com.football.league.data.datasource.local.FootballDatabase
-import com.football.league.data.datasource.remote.repository.FootballLeagueDao
-import com.football.league.data.datasource.remote.repository.FootballLeagueRepository
+import com.football.league.data.datasource.local.LeagueDatabase
+import com.football.league.data.datasource.remote.repository.LeagueDao
+import com.football.league.data.datasource.remote.repository.LeagueRepository
 import com.football.league.data.datasource.remote.repository.SearchLeagueDao
 import com.football.league.data.datasource.remote.repository.SearchLeagueRepository
 import dagger.Module
@@ -19,30 +19,30 @@ import javax.inject.Singleton
 object RoomModule {
     @Provides
     @Singleton
-    fun provideFootballDatabase(@ApplicationContext context: Context): FootballDatabase {
+    fun provideFootballDatabase(@ApplicationContext context: Context): LeagueDatabase {
         return Room.databaseBuilder(
             context,
-            FootballDatabase::class.java,
+            LeagueDatabase::class.java,
             "football_database"
         ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
     @Singleton
-    fun provideFootballLeagueDao(database: FootballDatabase): FootballLeagueDao {
+    fun provideFootballLeagueDao(database: LeagueDatabase): LeagueDao {
         return database.footballLeagueDao()
     }
 
     @Provides
     @Singleton
-    fun provideSearchLeagueDao(database: FootballDatabase): SearchLeagueDao {
+    fun provideSearchLeagueDao(database: LeagueDatabase): SearchLeagueDao {
         return database.searchLeagueDao()
     }
 
     @Provides
     @Singleton
-    fun provideFootballRepository(footballLeagueDao: FootballLeagueDao) : FootballLeagueRepository {
-        return FootballLeagueRepository(footballLeagueDao)
+    fun provideFootballRepository(leagueDao: LeagueDao) : LeagueRepository {
+        return LeagueRepository(leagueDao)
     }
 
     @Provides

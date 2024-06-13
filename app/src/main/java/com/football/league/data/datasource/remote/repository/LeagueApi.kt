@@ -2,9 +2,9 @@ package com.football.league.data.datasource.remote.repository
 
 import android.util.Log
 import com.football.league.data.datasource.remote.dto.CountryLeagues
-import com.football.league.data.datasource.remote.dto.EquipmentModel
-import com.football.league.data.datasource.remote.dto.LookUpEquipmentModel
+import com.football.league.data.datasource.remote.dto.TeamData
 import com.football.league.data.datasource.remote.dto.TeamDetailsResponse
+import com.football.league.data.datasource.remote.dto.TeamJercy
 import com.football.league.data.datasource.remote.network.NetworkHelper
 import com.football.league.ui.utils.ApiEndpoints
 import org.json.JSONObject
@@ -17,7 +17,7 @@ object LeagueApi {
         return jsonResponse?.let { parseCountryLeagues(it) }
     }
 
-     fun lookUpEquipment(id: Int): EquipmentModel? {
+     fun lookUpEquipment(id: Int): TeamData? {
         val url = "${ApiEndpoints.BASE_URL}${ApiEndpoints.LOOKUP_EQUIPMENT}?id=$id"
         val jsonResponse = NetworkHelper.makeGetRequest(url)
         return jsonResponse?.let { parseEquipmentModel(it) }
@@ -53,14 +53,14 @@ object LeagueApi {
     }
 
 
-    private fun parseEquipmentModel(jsonResponse: String): EquipmentModel? {
+    private fun parseEquipmentModel(jsonResponse: String): TeamData? {
         val jsonObject = JSONObject(jsonResponse)
         val equipmentJsonArray = jsonObject.getJSONArray("equipment")
 
-        val equipmentList = mutableListOf<LookUpEquipmentModel>()
+        val equipmentList = mutableListOf<TeamJercy>()
         for (i in 0 until equipmentJsonArray.length()) {
             val equipmentJson = equipmentJsonArray.getJSONObject(i)
-            val equipmentModel = LookUpEquipmentModel(
+            val equipmentModel = TeamJercy(
                 idEquipment = equipmentJson.getString("idEquipment"),
                 idTeam = equipmentJson.getString("idTeam"),
                 season = equipmentJson.getString("strSeason"),
@@ -74,7 +74,7 @@ object LeagueApi {
             Log.e("checkData","${equipmentModel.equipmentImageUrl}")
         }
 
-        return EquipmentModel(equipmentList)
+        return TeamData(equipmentList)
     }
 
 

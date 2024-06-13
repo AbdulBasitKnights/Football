@@ -3,11 +3,11 @@ package com.football.league.data.datasource.remote.dto
 import com.google.gson.annotations.SerializedName
 
 
-data class EquipmentModel(
+data class TeamData(
     @SerializedName("equipment")
-    val equipment : List<LookUpEquipmentModel>
+    val equipment : List<TeamJercy>
 )
-data class LookUpEquipmentModel(
+data class TeamJercy(
     @SerializedName("idEquipment")
     val idEquipment: String,
     @SerializedName("idTeam")

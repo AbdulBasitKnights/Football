@@ -1,7 +1,5 @@
 package com.football.league.di
 
-import com.football.league.data.datasource.remote.repository.FootballApi
-import com.football.league.data.datasource.remote.repository.FootballApiRepositoryImp
 import com.football.league.data.datasource.remote.repository.LeagueApi
 import dagger.Module
 import dagger.Provides

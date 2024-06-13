@@ -9,13 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.football.league.R
 import com.football.league.data.datasource.remote.dto.CountryLeagues
-import com.football.league.data.datasource.remote.dto.EquipmentModel
-import com.football.league.data.datasource.remote.dto.FootballLeague
+import com.football.league.data.datasource.remote.dto.TeamData
+import com.football.league.data.datasource.remote.dto.LeagueData
 import com.football.league.data.datasource.remote.dto.SearchLeagueEntity
 import com.football.league.data.datasource.remote.dto.TeamDetailsResponse
 import com.football.league.data.datasource.remote.dto.TeamSearchResponse
-import com.football.league.data.datasource.remote.repository.FootballApi
-import com.football.league.data.datasource.remote.repository.FootballLeagueRepository
+import com.football.league.data.datasource.remote.repository.LeagueRepository
 import com.football.league.data.datasource.remote.repository.LeagueApi
 import com.football.league.data.datasource.remote.repository.SearchLeagueRepository
 import com.google.gson.Gson
@@ -28,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val searchLeagueRepository: SearchLeagueRepository,
-    private val repository: FootballLeagueRepository
+    private val repository: LeagueRepository
 ): ViewModel() {
 
     private val _countryLeagueResponse = MutableLiveData<CountryLeagues?>()
@@ -37,8 +36,8 @@ class MainViewModel @Inject constructor(
     private val _searchResults = MutableLiveData<List<SearchLeagueEntity>>()
     val searchResults: LiveData<List<SearchLeagueEntity>> get() = _searchResults
 
-    private val _equipmentResults = MutableLiveData<EquipmentModel?>()
-    val equipmentResult: LiveData<EquipmentModel?> get() = _equipmentResults
+    private val _equipmentResults = MutableLiveData<TeamData?>()
+    val equipmentResult: LiveData<TeamData?> get() = _equipmentResults
 
     private val _teamSearchResult = MutableLiveData<TeamSearchResponse>()
     val teamSearchResult : LiveData<TeamSearchResponse> get() = _teamSearchResult
@@ -87,8 +86,11 @@ class MainViewModel @Inject constructor(
         if(searchQuery.isEmpty()){
             return
         }
-        viewModelScope.launch {
-            _searchResults.value = searchLeagueRepository.searchByPartialNameOrLeague(searchQuery)
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = searchLeagueRepository.searchByPartialNameOrLeague(searchQuery)
+            withContext(Dispatchers.Main){
+                _searchResults.value=response
+            }
         }
     }
 
@@ -102,16 +104,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun readFootballLeaguesFromJson(context: Context): List<FootballLeague> {
+    private fun readFootballLeaguesFromJson(context: Context): List<LeagueData> {
         val inputStream = context.resources.openRawResource(R.raw.leagues)
         val jsonString = inputStream.bufferedReader().use { it.readText() }
         val jsonObject = JSONObject(jsonString)
         val jsonArray = jsonObject.getJSONArray("leagues")
         val gson = Gson()
-        val leagues = mutableListOf<FootballLeague>()
+        val leagues = mutableListOf<LeagueData>()
         for (i in 0 until jsonArray.length()) {
             val leagueObject = jsonArray.getJSONObject(i)
-            val league = gson.fromJson(leagueObject.toString(), FootballLeague::class.java)
+            val league = gson.fromJson(leagueObject.toString(), LeagueData::class.java)
             leagues.add(league)
         }
         return leagues
