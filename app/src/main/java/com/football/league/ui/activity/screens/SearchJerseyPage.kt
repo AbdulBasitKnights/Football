@@ -4,11 +4,16 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -36,7 +41,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.football.league.data.datasource.remote.dto.TeamData
 import com.football.league.data.datasource.remote.dto.TeamDetailsResponse
 import com.football.league.ui.activity.MainViewModel
-import dev.esteki.expandable.Expandable
 
 @Composable
 fun SearchJerseyPage(viewModel: MainViewModel = hiltViewModel()) {
@@ -57,7 +61,7 @@ fun SearchJerseyPage(viewModel: MainViewModel = hiltViewModel()) {
             value = leagueName,
             onValueChange = { leagueName = it },
             label = { Text("Enter League Name") },
-            placeholder = { Text(text = "English Premier league")},
+            placeholder = { Text(text = "German Bundesliga")},
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -77,7 +81,7 @@ fun SearchJerseyPage(viewModel: MainViewModel = hiltViewModel()) {
                 value = teamName,
                 onValueChange = { teamName = it },
                 label = { Text("Enter Team Name") },
-                placeholder = { Text(text = "ars")},
+                placeholder = { Text(text = "B")},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -110,7 +114,77 @@ fun SearchJerseyPage(viewModel: MainViewModel = hiltViewModel()) {
         }
     }
 }
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ExpandableListItem(
+    team: TeamDetailsResponse,
+    equipmentResults: TeamData?,
+    onClick: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
 
+    val expandAnimation: State<Float> = animateFloatAsState(
+        targetValue = if (expanded) 540f else 0f,
+        animationSpec = tween(1000, easing = FastOutSlowInEasing)
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+            .clickable { expanded = !expanded }
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = rememberAsyncImagePainter(model = team.strBadge),
+                    contentDescription = "Team Badge",
+                    modifier = Modifier.size(64.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = team.name, modifier = Modifier.weight(1f))
+                IconButton(onClick = {
+                    expanded = !expanded
+                    onClick()
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
+            }
+            if (expanded) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "League: ${team.league}")
+                Text(text = "Formed Year: ${team.formedYear}")
+                Text(text = "Stadium: ${team.stadium}")
+                Text(text = "Country: ${team.strCountry}")
+                equipmentResults?.let { equipmentList ->
+                    equipmentList.equipment.forEach { equipment ->
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = equipment.equipmentImageUrl),
+                                contentDescription = "Jersey",
+                                modifier = Modifier.size(150.dp)
+                            )
+                            Text(text = "Jersey Season: ${equipment.season}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+/*
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExpandableListItem(
@@ -174,4 +248,4 @@ fun ExpandableListItem(
             }
         )
     }
-}
+}*/

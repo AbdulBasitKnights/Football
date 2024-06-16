@@ -40,7 +40,7 @@ fun SearchClubPage(
             value = searchText,
             onValueChange = { searchText = it },
             label = { Text("Search Teams") },
-            placeholder = { Text(text = "ars")},
+            placeholder = { Text(text = "B")},
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()

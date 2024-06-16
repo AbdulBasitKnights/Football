@@ -43,7 +43,7 @@ fun SearchLeagueScreen(mainViewModel: MainViewModel = hiltViewModel()) {
             value = leagueName,
             onValueChange = { leagueName = it },
             label = { Text("Enter League Name") },
-            placeholder = { Text(text = "English Premier league")},
+            placeholder = { Text(text = "German Bundesliga")},
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)

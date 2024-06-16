@@ -12,8 +12,8 @@ import androidx.core.view.WindowCompat
 
 private val LightColorPalette = lightColors(
     primary = MaroonDark,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primaryVariant = Purple40,
+    secondary = Pink80
 )
 
 @Composable
